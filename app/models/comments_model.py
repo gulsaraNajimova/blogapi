@@ -11,7 +11,6 @@ class CommentsModel(Base):
     comment = Column(String)
     created_at = Column(DateTime)
     edited_at = Column(DateTime)
-    author = Column(String, ForeignKey("users.username"))
     author_id = Column(String, ForeignKey("users.id"))
     regarding_blog_id = Column(Integer, ForeignKey("blogs.id"))
 
