@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from schemas.user_schema import EditUserInfo, User
+from app.schemas.user_schema import EditUserInfo, User
 
 users_router = APIRouter(
     prefix="/users",

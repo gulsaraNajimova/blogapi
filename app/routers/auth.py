@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from schemas.auth_schema import SignInInfo, SignUpInfo
+from app.schemas.auth_schema import SignInInfo, SignUpInfo
 
 
 auth_router = APIRouter(

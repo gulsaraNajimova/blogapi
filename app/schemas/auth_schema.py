@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from pydantic import BaseModel, EmailStr
-from schemas.user_schema import BaseUser
+from app.schemas.user_schema import BaseUser
 
 
 class SignInInfo(BaseModel):

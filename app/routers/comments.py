@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from schemas.comments_schema import Comment, BaseComment, EditCommentResponse, EditComment
+from app.schemas.comments_schema import Comment, BaseComment, EditCommentResponse, EditComment
 
 comment_router = APIRouter(
     prefix="/comments",

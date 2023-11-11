@@ -11,10 +11,10 @@ class BaseBlog(BaseModel):
 
 class Blog(BaseBlog):
     id: int
+    comments: List[str]
     created_at: datetime
     author: str
     author_id: int
-    comments: List[str]
 
 
 class EditBlog(BaseModel):

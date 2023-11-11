@@ -11,6 +11,7 @@ class Comment(BaseComment):
     author: str
     author_id: int
     created_at: datetime
+    edited_at: datetime
 
 
 class EditComment(BaseComment):
@@ -18,5 +19,5 @@ class EditComment(BaseComment):
 
 
 class EditCommentResponse(EditComment, Comment):
-    edited_at: datetime
+    ...
 

@@ -1,6 +1,6 @@
 from typing import List
 from fastapi import APIRouter
-from schemas.blog_schema import Blog, BaseBlog, EditBlog, EditBlogResponse, ReadOthersBlog
+from app.schemas.blog_schema import Blog, BaseBlog, EditBlog, EditBlogResponse, ReadOthersBlog
 
 blog_router = APIRouter(
     prefix="/blogs",

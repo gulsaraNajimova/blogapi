@@ -1,8 +1,9 @@
 from fastapi import FastAPI, status
-from routers.blog import blog_router
-from routers.users import users_router
-from routers.auth import auth_router
-from routers.comments import comment_router
+
+from app.routers.blog import blog_router
+from app.routers.users import users_router
+from app.routers.auth import auth_router
+from app.routers.comments import comment_router
 
 app = FastAPI()
 
