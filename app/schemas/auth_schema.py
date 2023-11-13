@@ -1,6 +1,6 @@
 from datetime import datetime
-
 from pydantic import BaseModel, EmailStr
+
 from app.schemas.user_schema import BaseUser
 
 
@@ -17,8 +17,6 @@ class SignInResponse(BaseModel):
 
 
 class SignUpInfo(BaseModel):
-    firstname: str
-    lastname: str
     username: str
     email: EmailStr
     password: str
