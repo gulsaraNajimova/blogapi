@@ -8,10 +8,6 @@ class BaseUser(BaseModel):
     is_superuser: str = False
 
 
-class User(BaseUser):
-    id: int
-
-
 class EditUserInfo(BaseModel):
     username: Optional[str]
     email: Optional[EmailStr]
