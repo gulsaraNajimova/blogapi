@@ -13,3 +13,6 @@ class EditUserInfo(BaseModel):
     email: Optional[EmailStr]
     password: Optional[str]
 
+    class Config:
+        orm_mode = True
+
