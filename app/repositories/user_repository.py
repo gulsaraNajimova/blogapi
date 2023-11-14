@@ -58,13 +58,18 @@ class UserRepository:
 
     def update_user_info(self, user_id: int, schema):
         with self.session_factory() as session:
+            user = self.get_by_id(user_id, False)
+
             if "password" in schema.dict(exclude_unset=True):
                 schema.hashed_password = hash_password(schema.password)
                 delattr(schema, "password")
-            update_user = schema.dict(exclude_unset=True)
-            session.query(self.user_model).filter(self.user_model.id == bindparam("id", user_id)).update(update_user)
+
+            for key, value in schema.dict(exclude_unset=True).items():
+                setattr(user, key, value)
+
             session.commit()
-            return self.get_by_id(user_id, eager=False)
+            session.refresh(user)
+            return user
 
     def delete_user(self, user_id: int):
         with self.session_factory() as session:
