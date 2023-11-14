@@ -13,7 +13,7 @@ class BaseBlog(BaseModel):
         orm_mode = True
 
 
-class Blog(BaseSchema):
+class Blog(BaseSchema, BaseBlog):
     comments: List[str]
     author: str
     author_id: int
@@ -22,6 +22,16 @@ class Blog(BaseSchema):
 class EditBlog(BaseModel):
     title: Optional[str]
     blog_text: Optional[str]
+
+    class Config:
+        orm_mode = True
+
+
+class EditBlogResponse(EditBlog, Blog):
+    ...
+
+
+class EditTags(BaseModel):
     tags_to_add: Optional[List[str]]
     tags_to_delete: Optional[List[str]]
 
@@ -29,7 +39,7 @@ class EditBlog(BaseModel):
         orm_mode = True
 
 
-class EditBlogResponse(EditBlog, Blog):
+class EditTagsResponse(EditTags, Blog):
     ...
 
 
