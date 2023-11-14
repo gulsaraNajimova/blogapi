@@ -9,6 +9,9 @@ class SignInInfo(BaseModel):
     email: EmailStr
     password: str
 
+    class Config:
+        orm_mode = True
+
 
 class SignInResponse(BaseSchema):
     access_token: str
@@ -21,6 +24,9 @@ class SignUpInfo(BaseModel):
     email: EmailStr
     password: str
     is_superuser: str = False
+
+    class Config:
+        orm_mode = True
 
 
 class SignUpResponse(SignInResponse):
