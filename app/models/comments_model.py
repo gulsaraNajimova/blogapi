@@ -1,16 +1,13 @@
 from sqlalchemy import String, Integer, Column, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 
-from app.core.database import Base
+from app.models.base_model import BaseModel
 
 
-class CommentsModel(Base):
+class CommentsModel(BaseModel):
     __tablename__ = "comments"
 
-    id = Column(Integer, primary_key=True, index=True)
     comment = Column(String)
-    created_at = Column(DateTime)
-    edited_at = Column(DateTime)
     author_id = Column(String, ForeignKey("users.id"))
     regarding_blog_id = Column(Integer, ForeignKey("blogs.id"))
 
