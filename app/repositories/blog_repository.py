@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.core.exceptions import NotFoundError
 from app.models.blogs_model import BlogsModel
+from app.models.tags_model import tag_blog_association, TagsModel
 
 
 class BlogRepository:
@@ -32,13 +33,20 @@ class BlogRepository:
                 raise NotFoundError(detail="No Blogs Found for this User")
             return blogs
 
-    def get_blogs_by_user_name(self, username: str):
+    def search_by_author(self, username: str):
         with self.session_factory() as session:
             blogs = session.query(self.blog_model).filter(self.blog_model.username == bindparam("username", username)).all()  # noqa: W504
             if not blogs:
                 raise NotFoundError(detail="No Blogs Found for this User")
             return blogs
 
-    # def get_blogs_by_tags(self, tags: List[str]):
-    #     with self.session_factory() as session:
-    #
+    def search_by_tags(self, tags_to_search: List[str]):
+        with self.session_factory() as session:
+            blogs = session.query(self.blog_model).join(tag_blog_association).join(TagsModel).filter(TagsModel.tag.in_(tags_to_search)).all()  # noqa: W504
+            return blogs
+
+    def update_blog(self, edit_info):
+        with self.session_factory() as session:
+            edited_blog = self.blog_model(
+
+            )
