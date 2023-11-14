@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, Column, Table, ForeignKey
 from sqlalchemy.orm import relationship
 
+from app.core.database import Base
 from app.models.base_model import BaseModel
 
 tag_blog_association = Table("blog_tags", Base.metadata,
