@@ -1,7 +1,6 @@
 from contextlib import AbstractContextManager
 from typing import Callable
 
-from sqlalchemy import bindparam
 from sqlalchemy.orm import Session
 
 from app.models.comments_model import CommentsModel
