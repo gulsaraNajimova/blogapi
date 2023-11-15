@@ -6,6 +6,7 @@ from app.schemas.base_schema import BaseSchema
 
 class BaseComment(BaseModel):
     comment: str
+    blog_id: int
 
     class Config:
         orm_mode = True
