@@ -1,5 +1,4 @@
 from contextlib import AbstractContextManager
-from datetime import datetime
 from typing import Callable, List
 
 from sqlalchemy import bindparam
