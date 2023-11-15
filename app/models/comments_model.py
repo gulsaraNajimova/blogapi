@@ -8,7 +8,7 @@ class CommentsModel(BaseModel):
     __tablename__ = "comments"
 
     comment = Column(String)
-    author_id = Column(String, ForeignKey("users.id"))
+    author_id = Column(String, ForeignKey("users.id"), ondelete="SET NULL")
     regarding_blog_id = Column(Integer, ForeignKey("blogs.id"))
 
     owner = relationship("UserModel", back_populates="comments")
