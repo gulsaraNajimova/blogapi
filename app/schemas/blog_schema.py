@@ -15,7 +15,6 @@ class BaseBlog(BaseModel):
 
 class Blog(BaseSchema, BaseBlog):
     comments: List[str]
-    author: str
     author_id: int
 
 
