@@ -1,12 +1,10 @@
 from contextlib import AbstractContextManager
-from typing import Callable, Optional
+from typing import Callable
 
 from sqlalchemy import bindparam
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session
 
-from app.core.exceptions import DuplicatedError, NotFoundError
-from app.core.security import hash_password
+from app.core.exceptions import NotFoundError
 from app.models.users_model import UserModel
 from app.repositories.base_repository import BaseRepository
 
