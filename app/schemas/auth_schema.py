@@ -32,3 +32,10 @@ class SignUpInfo(BaseModel):
 class SignUpResponse(SignInResponse):
     ...
 
+
+class Payload(BaseModel):
+    id: int
+    email: str
+    username: str
+    is_superuser: bool
+
