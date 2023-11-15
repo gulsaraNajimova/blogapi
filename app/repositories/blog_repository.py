@@ -3,11 +3,12 @@ from datetime import datetime
 from typing import Callable, List
 
 from sqlalchemy import bindparam
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from app.core.exceptions import NotFoundError
 from app.models.blogs_model import BlogsModel
 from app.models.tags_model import tag_blog_association, TagsModel
+from app.models.users_model import UserModel
 
 
 class BlogRepository:
@@ -26,7 +27,7 @@ class BlogRepository:
             session.refresh(blog)
             return blog
 
-    def get_blog_by_id(self, blog_id:int):
+    def get_blog_by_id(self, blog_id: int):
         with self.session_factory() as session:
             blog = session.query(self.blog_model).filter(self.blog_model.id == bindparam("id", blog_id)).first()
             return blog
@@ -40,7 +41,10 @@ class BlogRepository:
 
     def search_by_author(self, username: str):
         with self.session_factory() as session:
-            blogs = session.query(self.blog_model).filter(self.blog_model.username == bindparam("username", username)).all()  # noqa: W504
+            blogs = session.query(self.blog_model).join(UserModel, self.blog_model.author_id == bindparam("id", UserModel.id)
+            .filter(UserModel.username == username)
+            .options(joinedload(self.blog_model.owner)).all())  # noqa: W504
+
             if not blogs:
                 raise NotFoundError(detail="No Blogs Found for this User")
             return blogs
