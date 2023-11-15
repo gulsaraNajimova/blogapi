@@ -12,7 +12,6 @@ class BaseComment(BaseModel):
 
 
 class Comment(BaseSchema, BaseComment):
-    author: str
     author_id: int
 
 
