@@ -23,6 +23,11 @@ class BlogRepository(BaseRepository):
                 raise NotFoundError(detail="No Blogs Found for this User")
             return blogs
 
+    def search_all_blogs(self):
+        with self.session_factory() as session:
+            blogs = session.query(self.model).all()
+            return blogs
+
     def search_by_author(self, username: str):
         with (self.session_factory() as session):
             blogs = session.query(self.model).join(UserModel, self.model.author_id == UserModel.id
@@ -37,6 +42,8 @@ class BlogRepository(BaseRepository):
     def search_by_tags(self, tags_to_search: List[str]):
         with self.session_factory() as session:
             blogs = session.query(self.model).join(tag_blog_association).join(TagsModel).filter(TagsModel.tag.in_(tags_to_search)).all()  # noqa: W504
+            if not blogs:
+                raise NotFoundError(detail="No Blogs Found for Given Tag(s)")
             return blogs
 
     def update_blog_tags(self, blog_id: int, schema):
