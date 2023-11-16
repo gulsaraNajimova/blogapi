@@ -1,6 +1,13 @@
 from typing import List
-from fastapi import APIRouter
-from app.schemas.blog_schema import Blog, BaseBlog, EditBlog, EditBlogResponse, ReadOthersBlog
+
+from dependency_injector.wiring import inject, Provide
+from fastapi import APIRouter, Depends
+
+from app.core.containers import Container
+from app.core.dependencies import get_current_user, get_current_superuser
+from app.models.users_model import UserModel
+from app.schemas.blog_schema import Blog, BaseBlog, EditBlog, EditBlogResponse, SearchBlog, EditTags, EditTagsResponse
+from app.services.blog_service import BlogService
 
 blog_router = APIRouter(
     prefix="/blogs",
@@ -9,48 +16,55 @@ blog_router = APIRouter(
 
 
 @blog_router.post("/create-new-blog", response_model=Blog)
-async def upload_blog(blog: BaseBlog):
-    pass
+@inject
+async def upload_blog(blog: BaseBlog, current_user: UserModel = Depends(get_current_user),
+                      service: BlogService = Depends(Provide[Container.blog_service])):
+    return service.create(blog)
 
 
 @blog_router.get("/get-my-blogs", response_model=List[Blog])
-async def get_my_blogs():
-    pass
+@inject
+async def get_my_blogs(current_user: UserModel = Depends(get_current_user),
+                       service: BlogService = Depends(Provide[Container.blog_service])):
+    return service.get_blogs_by_user_id(current_user.id)
 
 
 @blog_router.patch("/edit-your-blog", response_model=EditBlogResponse)
-async def edit_blog(edit_info: EditBlog):
-    pass
+@inject
+async def edit_blog(edit_info: EditBlog, current_user: UserModel = Depends(get_current_user),
+                    service: BlogService = Depends(Provide[Container.blog_service])):
+    return service.update(current_user.id, schema=edit_info)
 
 
 @blog_router.delete("/delete-your-blog")
-async def delete_blog():
+@inject
+async def delete_blog(blog_id: int, current_user: UserModel = Depends(get_current_user),
+                      service: BlogService = Depends(Provide[Container.blog_service])):
+    service.delete(blog_id)
     return "Blog Successfully deleted"
 
 
 @blog_router.get("/read_", response_model=List[Blog])
-async def read_blogs(params: ReadOthersBlog):
-    pass
+@inject
+async def read_others_blogs(params: SearchBlog,
+                            current_user: UserModel = Depends(get_current_user),
+                            service: BlogService = Depends(Provide[Container.blog_service])):
+    return service.search_combined(params)
 
 
-@blog_router.post("/write-comment")
-async def write_comment(comment: str):
-    pass
-
-
-# tags routes
-@blog_router.patch("/add-tag", response_model=Blog)
-async def add_tag(blog_id: int, tag: List[str]):
-    pass
-
-
-@blog_router.delete("/delete-tag", response_model=Blog)
-async def delete_tag(blog_id: int, tag: List[str]):
-    pass
+@blog_router.patch("/edit-tags", response_model=EditTagsResponse)
+@inject
+async def edit_tags(blog_id: int, edit_info: EditTags,
+                    current_user: UserModel = Depends(get_current_user),
+                    service: BlogService = Depends(Provide[Container.blog_service])):
+    return service.update_blog_tags(blog_id, schema=edit_info)
 
 
 # for Admin
 @blog_router.delete("/admin-delete-blog")
-async def admin_delete_blog(blog_id: int):
+@inject
+async def admin_delete_blog(blog_id: int, current_user: UserModel = Depends(get_current_superuser),
+                            service: BlogService = Depends(Provide[Container.blog_service])):
+    service.delete(blog_id)
     return "Blog Successfully deleted"
 
