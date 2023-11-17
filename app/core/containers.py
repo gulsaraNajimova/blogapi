@@ -17,19 +17,20 @@ class Container(containers.DeclarativeContainer):
             "app.routers.auth",
             "app.routers.blog",
             "app.routers.comments",
-            "app.routers.user",
+            "app.routers.users",
             "app.core.dependencies"
         ]
     )
 
     db = providers.Singleton(Database, db_url=configs.DATABASE_URI)
+    print(configs.DATABASE_URI)
 
     blog_repository = providers.Factory(BlogRepository, session_factory=db.provided.session)
     comments_repository = providers.Factory(CommentRepository, session_factory=db.provided.session)
     user_repository = providers.Factory(UserRepository, session_factory=db.provided.session)
 
-    auth_service = providers.Factory(AuthService, repository=user_repository)
-    blog_service = providers.Factory(BlogService, repository=blog_repository)
-    comment_service = providers.Factory(CommentService, repository=comments_repository)
-    user_service = providers.Factory(UserService, repository=user_repository)
+    auth_service = providers.Factory(AuthService, user_repositoryrepository=user_repository)
+    blog_service = providers.Factory(BlogService, blog_repository=blog_repository)
+    comment_service = providers.Factory(CommentService, comments_repository=comments_repository)
+    user_service = providers.Factory(UserService, user_repository=user_repository)
 
