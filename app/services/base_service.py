@@ -1,8 +1,5 @@
-from app.repositories.base_repository import BaseRepository
-
-
 class BaseService:
-    def __init__(self, repository: BaseRepository):
+    def __init__(self, repository) -> None:
         self.repository = repository
 
     def create(self, schema):
