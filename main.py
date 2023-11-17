@@ -27,14 +27,15 @@ class AppCreator:
         def root():
             return "service is working"
 
-        app.include_router(auth_router)
-        app.include_router(blog_router)
-        app.include_router(comment_router)
-        app.include_router(users_router)
+        self.app.include_router(auth_router)
+        self.app.include_router(blog_router)
+        self.app.include_router(comment_router)
+        self.app.include_router(users_router)
 
 
 app_creator = AppCreator()
 app = app_creator.app
 db = app_creator.db
 container = app_creator.container
+print(db)
 
