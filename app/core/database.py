@@ -1,4 +1,6 @@
-from sqlalchemy import create_engine, orm
+import logging
+
+from sqlalchemy import create_engine, orm, event
 from contextlib import AbstractContextManager, contextmanager
 from typing import Callable
 from sqlalchemy.orm import Session, declarative_base
@@ -16,6 +18,18 @@ class Database:
                 bind=self._engine,
             ),
         )
+
+        logger = logging.getLogger('sqlalchemy.engine')
+
+        @event.listens_for(self._engine, 'before_cursor_execute')
+        def before_cursor_execute(conn, cursor, statement,
+                                  parameters, context, executemany):
+            logger.debug("Executing: %s", statement)
+
+        @event.listens_for(self._engine, 'after_cursor_execute')
+        def after_cursor_execute(conn, cursor, statement,
+                                 parameters, context, executemany):
+            logger.debug("Executed: %s", statement)
 
     def create_database(self) -> None:
         Base.metadata.create_all(self._engine)

@@ -5,7 +5,7 @@ from pydantic import BaseModel, EmailStr
 class BaseUser(BaseModel):
     username: str
     email: EmailStr
-    is_superuser: str = False
+    is_superuser: bool
 
 
 class EditUserInfo(BaseModel):
@@ -14,5 +14,5 @@ class EditUserInfo(BaseModel):
     password: Optional[str]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
