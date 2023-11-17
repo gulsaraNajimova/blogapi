@@ -10,7 +10,7 @@ class BaseBlog(BaseModel):
     tags: List[str]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class Blog(BaseSchema, BaseBlog):
@@ -23,7 +23,7 @@ class EditBlog(BaseModel):
     blog_text: Optional[str]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class EditBlogResponse(EditBlog, Blog):
@@ -35,7 +35,7 @@ class EditTags(BaseModel):
     tags_to_delete: Optional[List[str]]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class EditTagsResponse(EditTags, Blog):
@@ -47,7 +47,7 @@ class SearchBlog(BaseModel):
     tags: Optional[List[str]]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class SearchBlogResponse(Blog):
