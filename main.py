@@ -37,5 +37,4 @@ app_creator = AppCreator()
 app = app_creator.app
 db = app_creator.db
 container = app_creator.container
-print(db)
 
