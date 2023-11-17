@@ -9,7 +9,7 @@ class BaseComment(BaseModel):
     blog_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class Comment(BaseSchema, BaseComment):
@@ -20,7 +20,7 @@ class EditComment(BaseComment):
     ...
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class EditCommentResponse(EditComment, Comment):
