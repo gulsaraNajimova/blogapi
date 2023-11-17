@@ -30,7 +30,7 @@ class AuthService(UserService):
     def sign_in(self, sign_in_info):
         found_user = self.get_by_email(sign_in_info.email)
         if not found_user:
-            raise AuthError(detail = "Incorrect email or password")
+            raise AuthError(detail="Incorrect email or password")
         if not verify_password(sign_in_info.password, found_user.hashed_password):
             raise AuthError(detail="Incorrect email or password")
 
