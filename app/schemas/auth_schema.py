@@ -10,7 +10,7 @@ class SignInInfo(BaseModel):
     password: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class SignInResponse(BaseSchema):
@@ -23,10 +23,10 @@ class SignUpInfo(BaseModel):
     username: str
     email: EmailStr
     password: str
-    is_superuser: str = False
+    is_superuser: bool = False
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class SignUpResponse(SignInResponse):
