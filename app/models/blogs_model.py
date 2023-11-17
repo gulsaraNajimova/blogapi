@@ -11,7 +11,6 @@ class BlogsModel(BaseModel):
     title = Column(String(100))
     blog_text = Column(String)
     author_id = Column(Integer, ForeignKey("users.id"))
-    blog_comments_id = Column(Integer, ForeignKey("comments.id"), nullable=True)
 
     owner = relationship("UserModel", back_populates="blogs")
     comments = relationship("CommentsModel", back_populates="blog")
