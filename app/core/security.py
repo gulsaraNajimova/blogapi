@@ -8,7 +8,7 @@ from passlib.context import CryptContext
 from app.core.config import configs
 from app.core.exceptions import AuthError
 
-pwd_context = CryptContext(schemas=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 ALGORITHM = "HS256"
 
 
