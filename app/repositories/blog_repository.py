@@ -23,11 +23,6 @@ class BlogRepository(BaseRepository):
                 raise NotFoundError(detail="No Blogs Found for this User")
             return blogs
 
-    def search_all_blogs(self):
-        with self.session_factory() as session:
-            blogs = session.query(self.model).all()
-            return blogs
-
     def search_by_author(self, username: str):
         with (self.session_factory() as session):
             blogs = session.query(self.model).join(UserModel, self.model.author_id == UserModel.id
