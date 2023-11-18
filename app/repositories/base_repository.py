@@ -35,6 +35,10 @@ class BaseRepository:
                 raise NotFoundError(detail=f"Not found id : {id}")
             return query
 
+    def read_all(self, skip: int = 0, limit: int = 100):
+        with self.session_factory() as session:
+            return session.query(self.model).offset(skip).limit(limit).all()
+
     def update(self, id: int, schema):
         with self.session_factory() as session:
             session.query(self.model).filter(self.model.id == id).update(schema.dict(exclude_none=True))
