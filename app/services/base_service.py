@@ -8,6 +8,9 @@ class BaseService:
     def get_by_id(self, id: int, eager: bool):
         return self.repository.read_by_id(id, eager)
 
+    def get_all(self, skip: int = 0, limit: int = 100):
+        return self.repository.read_all(skip, limit)
+
     def update(self, id: int, schema):
         return self.repository.update(id, schema)
 
