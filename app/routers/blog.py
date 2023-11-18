@@ -46,10 +46,10 @@ async def delete_blog(blog_id: int, current_user: UserModel = Depends(get_curren
 
 @blog_router.get("/read_", response_model=List[Blog])
 @inject
-async def read_others_blogs(params: SearchBlog,
+async def read_others_blogs(params: SearchBlog, skip: int = 0, limit: int = 100,
                             current_user: UserModel = Depends(get_current_user),
                             service: BlogService = Depends(Provide[Container.blog_service])):
-    return service.search_combined(params)
+    return service.search_combined(params, skip, limit)
 
 
 @blog_router.patch("/edit-tags", response_model=EditTagsResponse)
@@ -67,4 +67,3 @@ async def admin_delete_blog(blog_id: int, current_user: UserModel = Depends(get_
                             service: BlogService = Depends(Provide[Container.blog_service])):
     service.delete(blog_id)
     return "Blog Successfully deleted"
-
