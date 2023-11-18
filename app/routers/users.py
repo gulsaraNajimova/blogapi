@@ -37,7 +37,7 @@ async def delete_account(current_user: UserModel = Depends(get_current_user),
 async def get_all_users(skip: int = 0, limit: int = 100,
                         current_user: UserModel = Depends(get_current_superuser),
                         service: UserService = Depends(Provide[Container.user_service])):
-    return service.get_all_users(skip, limit)
+    return service.get_all(skip, limit)
 
 
 @users_router.get("/get-user")
