@@ -15,11 +15,6 @@ class UserRepository(BaseRepository):
         self.session_factory = session_factory
         super().__init__(session_factory, UserModel)
 
-    def create(self, schema):
-        schema.hashed_password = hash_password(schema.password)
-        delattr(schema, "password")
-        super().create(schema)
-
     def update(self, id: int, schema):
         if "password" in schema.dict(exclude_unset=True):
             schema.hashed_password = hash_password(schema.password)
