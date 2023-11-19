@@ -1,7 +1,6 @@
 from datetime import datetime
 from pydantic import BaseModel, EmailStr
 
-from app.schemas.base_schema import BaseSchema
 from app.schemas.user_schema import BaseUser
 
 
@@ -13,7 +12,7 @@ class SignInInfo(BaseModel):
         from_attributes = True
 
 
-class SignInResponse(BaseSchema):
+class SignInResponse(BaseModel):
     access_token: str
     token_expires: datetime
     user_info: BaseUser
