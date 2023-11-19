@@ -7,7 +7,9 @@ class UserService(BaseService):
         self.user_repository = user_repository
         super().__init__(user_repository)
 
+    def update(self, id: int, schema):
+        return self.user_repository.update(id, schema)
+
     def get_by_email(self, email: str):
         return self.user_repository.get_by_email(email)
-
 
