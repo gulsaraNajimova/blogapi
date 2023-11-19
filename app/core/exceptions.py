@@ -10,7 +10,7 @@ class AuthError(HTTPException):
 
 class DuplicatedError(HTTPException):
     def __init__(self, detail: Any = None, headers: Optional[Dict[str, Any]] = None):
-        super.__init__(status.HTTP_400_BAD_REQUEST, detail, headers)
+        super().__init__(status.HTTP_400_BAD_REQUEST, detail, headers)
 
 
 class NotFoundError(HTTPException):
