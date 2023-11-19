@@ -21,7 +21,7 @@ def get_current_user(
         token_data = Payload(**payload)
     except ValidationError:
         raise AuthError(detail="Could not Validate Credentials")
-    current_user = service.get_by_id(token_data.id)
+    current_user = service.get_by_id(token_data.id, True)
     if not current_user:
         raise AuthError(detail="User not Found")
     return current_user
