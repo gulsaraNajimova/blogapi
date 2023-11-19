@@ -1,6 +1,7 @@
 from contextlib import AbstractContextManager
 from typing import Callable
 
+from pydantic import BaseModel
 from sqlalchemy import bindparam
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, joinedload
@@ -15,14 +16,15 @@ class BaseRepository:
 
     def create(self, schema):
         with self.session_factory() as session:
-            query = self.model(**schema.dict())
+            if isinstance(schema, BaseModel):
+                schema = self.model(**schema.model_dump())
             try:
-                session.add(query)
+                session.add(schema)
                 session.commit()
-                session.refresh(query)
+                session.refresh(schema)
             except IntegrityError as e:
                 raise DuplicatedError(detail=str(e.orig))
-            return query
+            return schema
 
     def read_by_id(self, id: int, eager=False):
         with self.session_factory() as session:
