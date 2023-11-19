@@ -33,19 +33,19 @@ class AuthService(UserService):
             raise AuthError(detail="Incorrect email or password")
         if not verify_password(sign_in_info.password, found_user.hashed_password):
             raise AuthError(detail="Incorrect email or password")
-
+        delattr(found_user, "hashed_password")
         sign_in_result = return_token(found_user)
         return sign_in_result
 
     def sign_up(self, sign_up_info):
-        get_hashed_password = hash_password(sign_up_info.password)
         user = UserModel(
             username=sign_up_info.username,
             email=sign_up_info.email,
-            hashed_password=get_hashed_password,
-            is_superuser=False)
-
-        created_user = self.create(user)
+            is_superuser=sign_up_info.is_superuser
+        )
+        user.hashed_password = hash_password(sign_up_info.password)
+        created_user = self.repository.create(user)
+        delattr(created_user, "hashed_password")
 
         sign_up_result = return_token(created_user)
         return sign_up_result
