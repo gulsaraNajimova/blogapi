@@ -20,7 +20,7 @@ def return_token(user_info):
     access_token, expiration_datetime = create_token(payload.model_dump(), token_lifespan)
     result = {
         "access_token": access_token,
-        "expiration": expiration_datetime,
+        "token_expires": expiration_datetime,
         "user_info": user_info
     }
     return result
