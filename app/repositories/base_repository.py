@@ -45,7 +45,7 @@ class BaseRepository:
         with self.session_factory() as session:
             session.query(self.model).filter(self.model.id == id).update(schema.dict(exclude_none=True))
             session.commit()
-            return self.read_by_id(id)
+            return self.read_by_id(id, False)
 
     def delete_by_id(self, id: int):
         with self.session_factory() as session:
