@@ -14,9 +14,9 @@ class BaseUser(BaseSchema, BaseModel):
 
 
 class EditUserInfo(BaseModel):
-    username: Optional[str]
-    email: Optional[EmailStr]
-    password: Optional[str]
+    username: Optional[str] = None
+    email: Optional[EmailStr] = None
+    password: Optional[str] = None
 
     class Config:
         from_attributes = True
