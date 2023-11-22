@@ -14,25 +14,21 @@ class BaseRepository:
         self.session_factory = session_factory
         self.model = model
 
-    def create(self, schema):
+    def create(self, author_id: int, schema):
         with self.session_factory() as session:
             if isinstance(schema, BaseModel):
-                schema = self.model(**schema.model_dump())
+                db_model = self.model(**schema.model_dump(), author_id=author_id)
             try:
-                session.add(schema)
+                session.add(db_model)
                 session.commit()
-                session.refresh(schema)
+                session.refresh(db_model)
             except IntegrityError as e:
                 raise DuplicatedError(detail=str(e.orig))
-            return schema
+            return db_model
 
-    def read_by_id(self, id: int, eager=False):
+    def read_by_id(self, id: int):
         with self.session_factory() as session:
-            query = session.query(self.model)
-            if eager:
-                for eager in getattr(self.model, "eagers", []):
-                    query = query.options(joinedload(getattr(self.model, eager)))
-            query = query.filter(self.model.id == bindparam("id", id)).first()
+            query = session.query(self.model).filter(self.model.id == bindparam("id", id)).first()
             if not query:
                 raise NotFoundError(detail=f"Not found id : {id}")
             return query
@@ -45,7 +41,7 @@ class BaseRepository:
         with self.session_factory() as session:
             session.query(self.model).filter(self.model.id == id).update(schema.dict(exclude_none=True))
             session.commit()
-            return self.read_by_id(id, False)
+            return self.read_by_id(id)
 
     def delete_by_id(self, id: int):
         with self.session_factory() as session:
