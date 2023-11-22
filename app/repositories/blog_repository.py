@@ -2,7 +2,7 @@ from contextlib import AbstractContextManager
 from typing import Callable, List
 
 from sqlalchemy import bindparam
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session, joinedload, noload
 
 from app.core.exceptions import NotFoundError
 from app.models.blogs_model import BlogsModel
@@ -16,9 +16,33 @@ class BlogRepository(BaseRepository):
         self.session_factory = session_factory
         super().__init__(session_factory, BlogsModel)
 
-    def get_blogs_by_user_id(self, author_id: int) -> List:
+    def create_with_tags(self, schema, author_id: int, tags: List[str]):
         with self.session_factory() as session:
-            blogs = session.query(self.model).filter(self.model.author_id == bindparam("author_id", author_id)).all()  # noqa: W504
+            blog = BlogsModel(**schema.dict(), author_id=author_id)
+            session.add(blog)
+
+            for tag_to_create in tags:
+                db_tag = session.query(TagsModel).filter(TagsModel.tag == bindparam("tag", tag_to_create)).first()
+                if not db_tag:
+                    tag = TagsModel(tag=tag_to_create)
+                    session.add(tag)
+                else:
+                    tag = db_tag
+
+                blog.tags.append(tag)
+
+            session.commit()
+            session.refresh(blog)
+            return blog
+
+    def get_blogs_by_user_id(self, author_id: int, eager: bool) -> List:
+        with self.session_factory() as session:
+            query = session.query(self.model)
+            if eager:
+                query = query.options(joinedload(self.model.tags), joinedload(self.model.comments))
+            else:
+                query = query.options(noload(self.model.tags), noload(self.model.comments))
+            blogs = query.filter(self.model.author_id == bindparam("author_id", author_id)).all()
             if not blogs:
                 raise NotFoundError(detail="No Blogs Found for this User")
             return blogs
