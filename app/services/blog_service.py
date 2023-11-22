@@ -22,19 +22,11 @@ class BlogService(BaseService):
         self.blog_repository = blog_repository
         super().__init__(blog_repository)
 
-    def create(self, schema):
-        tags_to_create = schema.tags
-        delattr(schema, "tags")
-        blog = super().create(schema)
+    def create_with_tags(self, schema, author_id: int, tags: List[str]):
+        return self.blog_repository.create_with_tags(schema, author_id, tags)
 
-        for tag_to_create in tags_to_create:
-            tag = super().create(tag_to_create)
-            blog.tags.append(tag)
-
-            return blog
-
-    def get_blogs_by_user_id(self, author_id: int):
-        return self.blog_repository.get_blogs_by_user_id(author_id)
+    def get_blogs_by_user_id(self, author_id: int, eager: bool):
+        return self.blog_repository.get_blogs_by_user_id(author_id, eager)
 
     def search_combined(self, params, skip: int = 0, limit: int = 100):
         blogs = []
