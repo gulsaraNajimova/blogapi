@@ -19,7 +19,7 @@ async def sign_in(sign_in_info: SignInInfo, service: AuthService = Depends(Provi
     return service.sign_in(sign_in_info)
 
 
-@auth_router.post("sign-up", response_model=SignUpResponse)
+@auth_router.post("/sign-up", response_model=SignUpResponse)
 @inject
 async def sign_up(sign_up_info: SignUpInfo, service: AuthService = Depends(Provide[Container.auth_service])):
     return service.sign_up(sign_up_info)
