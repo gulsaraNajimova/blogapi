@@ -14,7 +14,7 @@ class BlogsModel(BaseModel):
 
     owner = relationship("UserModel", back_populates="blogs")
     comments = relationship("CommentsModel", back_populates="blog")
-    tags = relationship("TagsModel", tag_blog_association, back_populates="blogs")
+    tags = relationship("TagsModel", secondary=tag_blog_association, back_populates="blogs")
 
     def __repr__(self):
         return f"<Title {self.title}, tags {self.tags}>"
