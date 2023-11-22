@@ -2,11 +2,11 @@ class BaseService:
     def __init__(self, repository) -> None:
         self.repository = repository
 
-    def create(self, schema):
-        return self.repository.create(schema)
+    def create(self, author_id, schema):
+        return self.repository.create(author_id, schema)
 
-    def get_by_id(self, id: int, eager: bool):
-        return self.repository.read_by_id(id, eager)
+    def get_by_id(self, id: int):
+        return self.repository.read_by_id(id)
 
     def get_all(self, skip: int = 0, limit: int = 100):
         return self.repository.read_all(skip, limit)
