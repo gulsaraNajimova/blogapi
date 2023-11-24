@@ -8,7 +8,10 @@ class UserService(BaseService):
         self.user_repository = user_repository
         super().__init__(user_repository)
 
-    def update(self, id: int, schema):
+    def create_user(self, schema):
+        return self.user_repository.create_user(schema)
+
+    def update_user(self, id: int, schema):
         if "password" in schema.dict(exclude_unset=True):
             hashed_password = hash_password(schema.password)
             setattr(schema, "hashed_password", hashed_password)
