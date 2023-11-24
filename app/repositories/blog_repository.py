@@ -35,27 +35,34 @@ class BlogRepository(BaseRepository):
             session.refresh(blog)
             return blog
 
-    def get_blogs_by_user_id(self, author_id: int, eager: bool) -> List:
+    def get_blog(self, blog_id: int):
         with self.session_factory() as session:
-            query = session.query(self.model)
-            if eager:
-                query = query.options(joinedload(self.model.tags), joinedload(self.model.comments))
-            else:
-                query = query.options(noload(self.model.tags), noload(self.model.comments))
-            blogs = query.filter(self.model.author_id == bindparam("author_id", author_id)).all()
+            blog = session.query(self.model).options(joinedload(self.model.tags)).filter(self.model.id == bindparam("id", blog_id)).first()
+            if not blog:
+                raise NotFoundError(detail=f"No Blog Found for ID {blog_id}")
+            return blog
+
+    def get_blog_with_comments(self, blog_id: int):
+        with self.session_factory() as session:
+            blog = session.query(self.model).options(joinedload(self.model.comments)).filter(self.model.id == bindparam("id", blog_id)).first()
+            if not blog:
+                raise NotFoundError(detail=f"No Blog Found for ID {blog_id}")
+            return blog
+
+    def get_user_blogs(self, author_id: int):
+        with self.session_factory() as session:
+            blogs = session.query(self.model).options(joinedload(self.model.tags)).filter(self.model.author_id == bindparam("author_id", author_id)).all()
             if not blogs:
                 raise NotFoundError(detail="No Blogs Found for this User")
             return blogs
 
-    def search_by_author(self, username: str):
+    def search_by_author(self, author: str):
         with (self.session_factory() as session):
             blogs = session.query(self.model).join(UserModel, self.model.author_id == UserModel.id
-                                                   ).filter(UserModel.username == bindparam("username", username)
-                                                   .options(joinedload(self.model.owner))
-                                                   .all())  # noqa: W504
+                                                   ).filter(UserModel.username == author).options(joinedload(self.model.owner)).all()
 
             if not blogs:
-                raise NotFoundError(detail="No Blogs Found for this User")
+                raise NotFoundError(detail="No Blogs Found for Given Author")
             return blogs
 
     def search_by_tags(self, tags_to_search: List[str]):
@@ -64,16 +71,4 @@ class BlogRepository(BaseRepository):
             if not blogs:
                 raise NotFoundError(detail="No Blogs Found for Given Tag(s)")
             return blogs
-
-    def update_blog_tags(self, blog_id: int, schema):
-        with self.session_factory() as session:
-            blog = self.read_by_id(blog_id)
-            if schema.tags_to_add:
-                blog.tags.extend(schema.tags_to_add)
-            if schema.tags_to_delete:
-                blog.tags = [tag for tag in blog.tags if tag not in schema.tags_to_delete]
-
-            session.commit()
-            session.refresh(blog)
-            return blog
 
