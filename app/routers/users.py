@@ -20,13 +20,14 @@ users_router = APIRouter(
 async def update_user_info(user_info: EditUserInfo,
                            current_user: UserModel = Depends(get_current_user),
                            service: UserService = Depends(Provide[Container.user_service])):
-    return service.update(id=current_user.id, schema=user_info)
+    user = service.update_user(id=current_user.id, schema=user_info)
+    return user
 
 
-@users_router.delete("/delete-account")
+@users_router.delete("/delete-user")
 @inject
-async def delete_account(current_user: UserModel = Depends(get_current_user),
-                         service: UserService = Depends(Provide[Container.user_service])):
+async def delete_user(current_user: UserModel = Depends(get_current_user),
+                      service: UserService = Depends(Provide[Container.user_service])):
     service.delete(current_user.id)
     return "User Successfully Deleted"
 
@@ -34,15 +35,15 @@ async def delete_account(current_user: UserModel = Depends(get_current_user),
 # for Admin
 @users_router.get("/get-all-users", response_model=List[BaseUser])
 @inject
-async def get_all_users(skip: int = 0, limit: int = 100,
+async def admin_get_all_users(skip: int = 0, limit: int = 100,
                         current_user: UserModel = Depends(get_current_superuser),
                         service: UserService = Depends(Provide[Container.user_service])):
     return service.get_all(skip, limit)
 
 
-@users_router.get("/get-user")
+@users_router.delete("/admin-delete-user")
 @inject
-async def get_user(user_id: int, current_user: UserModel = Depends(get_current_superuser),
+async def admin_delete_user(user_id: int, current_user: UserModel = Depends(get_current_superuser),
                    service: UserService = Depends(Provide[Container.user_service])):
-    return service.get_by_id(user_id, eager=False)
+    return service.delete(user_id)
 
