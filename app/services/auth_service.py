@@ -44,7 +44,7 @@ class AuthService(UserService):
             is_superuser=sign_up_info.is_superuser
         )
         user.hashed_password = hash_password(sign_up_info.password)
-        created_user = self.repository.create(user)
+        created_user = self.repository.create_user(user)
         delattr(created_user, "hashed_password")
 
         sign_up_result = return_token(created_user)
