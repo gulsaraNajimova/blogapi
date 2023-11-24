@@ -7,6 +7,9 @@ class CommentService(BaseService):
         self.comment_repository = comment_repository
         super().__init__(comment_repository)
 
-    def get_comments_by_user_id(self, author_id: int):
-        return self.comment_repository.get_comment_by_user_id(author_id)
+    def create_comment(self, author_id: int, schema):
+        return self.comment_repository.create_comment(author_id, schema)
+
+    def get_user_comments(self, author_id: int):
+        return self.comment_repository.get_user_comments(author_id)
 
