@@ -2,9 +2,6 @@ class BaseService:
     def __init__(self, repository) -> None:
         self.repository = repository
 
-    def create(self, author_id, schema):
-        return self.repository.create(author_id, schema)
-
     def get_by_id(self, id: int):
         return self.repository.read_by_id(id)
 
