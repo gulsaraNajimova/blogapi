@@ -6,7 +6,8 @@ from fastapi import APIRouter, Depends, Path
 from app.core.containers import Container
 from app.core.dependencies import get_current_user, get_current_superuser
 from app.models.users_model import UserModel
-from app.schemas.blog_schema import Blog, BaseBlog, EditBlog, EditBlogResponse, SearchBlog, EditTags, EditTagsResponse
+from app.schemas.blog_schema import Blog, BaseBlog, EditBlog, EditBlogResponse, SearchBlog, BlogWithComments, \
+    BlogWithTags
 from app.services.blog_service import BlogService
 
 blog_router = APIRouter(
@@ -15,19 +16,32 @@ blog_router = APIRouter(
 )
 
 
-@blog_router.post("/create-blog", response_model=Blog)
+@blog_router.post("/create-blog-with-tags", response_model=BlogWithTags)
 @inject
 async def upload_blog(blog: BaseBlog, tags: List[str], current_user: UserModel = Depends(get_current_user),
                       service: BlogService = Depends(Provide[Container.blog_service])):
     return service.create_with_tags(blog, current_user.id, tags)
 
 
-@blog_router.get("/get-blogs/{eager}", response_model=List[Blog])
+@blog_router.get("/get-blog", response_model=BlogWithTags)
 @inject
-async def get_my_blogs(eager: bool = Path(description="Do you want to get all relevant info(tags, comments) or just blogs?"),
-                       current_user: UserModel = Depends(get_current_user),
-                       service: BlogService = Depends(Provide[Container.blog_service])):
-    return service.get_blogs_by_user_id(current_user.id, eager)
+async def get_my_blog(blog_id: int, current_user: UserModel = Depends(get_current_user),
+                   service: BlogService = Depends(Provide[Container.blog_service])):
+    return service.get_blog(blog_id)
+
+
+@blog_router.get("/get-blog-comments", response_model=BlogWithComments)
+@inject
+async def get_blog_with_comments(blog_id: int, current_user: UserModel = Depends(get_current_user),
+                   service: BlogService = Depends(Provide[Container.blog_service])):
+    return service.get_blog_with_comments(blog_id)
+
+
+@blog_router.get("/get-blogs/", response_model=List[BlogWithTags])
+@inject
+async def get_my_blogs(current_user: UserModel = Depends(get_current_user),
+                    service: BlogService = Depends(Provide[Container.blog_service])):
+    return service.get_user_blogs(current_user.id)
 
 
 @blog_router.patch("/edit-blog", response_model=EditBlogResponse)
@@ -47,21 +61,34 @@ async def delete_blog(blog_id: int, current_user: UserModel = Depends(get_curren
 
 @blog_router.get("/read-blogs", response_model=List[Blog])
 @inject
-async def read_others_blogs(params: SearchBlog, skip: int = 0, limit: int = 100,
-                            current_user: UserModel = Depends(get_current_user),
-                            service: BlogService = Depends(Provide[Container.blog_service])):
-    return service.search_combined(params, skip, limit)
+async def read_all_blogs(skip: int = 0, limit: int = 100,
+                        service: BlogService = Depends(Provide[Container.blog_service])):
+    return service.get_all(skip, limit)
 
 
-@blog_router.patch("/edit-tags", response_model=EditTagsResponse)
+@blog_router.get("/search-by-author", response_model=List[Blog])
 @inject
-async def edit_tags(blog_id: int, edit_info: EditTags,
-                    current_user: UserModel = Depends(get_current_user),
-                    service: BlogService = Depends(Provide[Container.blog_service])):
-    return service.update_blog_tags(blog_id, schema=edit_info)
+async def search_by_author(author: str,
+                           service: BlogService = Depends(Provide[Container.blog_service])):
+    return service.search_by_author(author)
+
+
+@blog_router.get("/search-by-tags", response_model=List[Blog])
+@inject
+async def search_by_tags(tags_to_search: List[str],
+                         service: BlogService = Depends(Provide[Container.blog_service])):
+    return service.search_by_tags(tags_to_search)
 
 
 # for Admin
+@blog_router.get("/admin-get-all-blogs", response_model=List[BlogWithTags])
+@inject
+async def admin_get_all_blogs(skip: int = 0, limit: int = 100,
+                              current_user: UserModel = Depends(get_current_superuser),
+                              service: BlogService = Depends(Provide[Container.blog_service])):
+    return service.get_all(skip, limit)
+
+
 @blog_router.delete("/admin-delete-blog")
 @inject
 async def admin_delete_blog(blog_id: int, current_user: UserModel = Depends(get_current_superuser),
