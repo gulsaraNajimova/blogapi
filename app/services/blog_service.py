@@ -25,26 +25,18 @@ class BlogService(BaseService):
     def create_with_tags(self, schema, author_id: int, tags: List[str]):
         return self.blog_repository.create_with_tags(schema, author_id, tags)
 
-    def get_blogs_by_user_id(self, author_id: int, eager: bool):
-        return self.blog_repository.get_blogs_by_user_id(author_id, eager)
+    def get_blog(self, blog_id: int):
+        return self.blog_repository.get_blog(blog_id)
 
-    def search_combined(self, params, skip: int = 0, limit: int = 100):
-        blogs = []
+    def get_blog_with_comments(self, blog_id: int):
+        return self.blog_repository.get_blog_with_comments(blog_id)
 
-        if params.author:
-            blogs += self.blog_repository.search_by_author(username=params.author)
-        if params.tags:
-            blogs += self.blog_repository.search_by_tags(tags_to_search=params.tags)
+    def get_user_blogs(self, author_id: int):
+        return self.blog_repository.get_user_blogs(author_id)
 
-        unique_blogs = remove_duplicates(blogs)
+    def search_by_author(self, author: str):
+        return self.blog_repository.search_by_author(author)
 
-        if params.author and params.tags:
-            unique_blogs = [blog for blog in unique_blogs if blog.author == params.author]
+    def search_by_tags(self, tags_to_search: List[str]):
+        return self.blog_repository.search_by_tags(tags_to_search)
 
-        if len(blogs) == 0:
-            unique_blogs = self.blog_repository.read_all(skip, limit)
-
-        return unique_blogs
-
-    def update_blog_tags(self, blog_id: int, schema):
-        return self.blog_repository.update_blog_tags(blog_id, schema)
