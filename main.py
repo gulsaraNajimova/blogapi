@@ -3,6 +3,7 @@ from fastapi import FastAPI, status
 from app.core.config import configs
 from app.core.containers import Container
 from app.routers.blog import blog_router
+from app.routers.tags import tag_router
 from app.routers.users import users_router
 from app.routers.auth import auth_router
 from app.routers.comments import comment_router
@@ -28,9 +29,10 @@ class AppCreator:
             return "service is working"
 
         self.app.include_router(auth_router)
-        self.app.include_router(blog_router)
-        self.app.include_router(comment_router)
         self.app.include_router(users_router)
+        self.app.include_router(blog_router)
+        self.app.include_router(tag_router)
+        self.app.include_router(comment_router)
 
 
 app_creator = AppCreator()
