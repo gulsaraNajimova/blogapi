@@ -2,7 +2,7 @@ from typing import List, Optional
 from pydantic import BaseModel, Field
 
 from app.schemas.base_schema import BaseSchema
-from app.schemas.comments_schema import Comment
+from app.schemas.comments_schema import CommentWithAuthor
 
 
 class Tag(BaseModel):
@@ -18,9 +18,15 @@ class BaseBlog(BaseModel):
 
 
 class Blog(BaseSchema, BaseBlog):
-    tags: Optional[List[Tag]] = None
-    comments: Optional[List[Comment]] = None
     author_id: int
+
+
+class BlogWithTags(Blog):
+    tags: List[Tag]
+
+
+class BlogWithComments(BaseSchema, BaseBlog):
+    comments: List[CommentWithAuthor]
 
 
 class EditBlog(BaseModel):
@@ -32,18 +38,6 @@ class EditBlog(BaseModel):
 
 
 class EditBlogResponse(BaseSchema, EditBlog):
-    ...
-
-
-class EditTags(BaseModel):
-    tags_to_add: Optional[List[str]] = None
-    tags_to_delete: Optional[List[str]] = None
-
-    class Config:
-        from_attributes = True
-
-
-class EditTagsResponse(EditTags, Blog):
     ...
 
 
