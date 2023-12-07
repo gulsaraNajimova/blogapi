@@ -1,7 +1,7 @@
 from typing import List
 
 from dependency_injector.wiring import inject, Provide
-from fastapi import APIRouter, Depends, Path
+from fastapi import APIRouter, Depends, Path, Body, Query
 
 from app.core.containers import Container
 from app.core.dependencies import get_current_user, get_current_superuser
@@ -16,7 +16,7 @@ blog_router = APIRouter(
 )
 
 
-@blog_router.post("/create-blog-with-tags", response_model=BlogWithTags)
+@blog_router.post("/create-blog-with-tags", response_model=Blog)
 @inject
 async def upload_blog(blog: BaseBlog, tags: List[str], current_user: UserModel = Depends(get_current_user),
                       service: BlogService = Depends(Provide[Container.blog_service])):
@@ -59,25 +59,24 @@ async def delete_blog(blog_id: int, current_user: UserModel = Depends(get_curren
     return "Blog Successfully deleted"
 
 
-@blog_router.get("/read-blogs", response_model=List[Blog])
+@blog_router.get("/search-blogs", response_model=List[SearchBlog])
 @inject
-async def read_all_blogs(skip: int = 0, limit: int = 100,
-                        service: BlogService = Depends(Provide[Container.blog_service])):
-    return service.get_all(skip, limit)
+async def search_blogs(search_keywords: str = Query(..., description="In the case of multiple keywords, type with comma"),
+                       service: BlogService = Depends(Provide[Container.blog_service])):
+    blogs = service.search_blogs(search_keywords)
 
-
-@blog_router.get("/search-by-author", response_model=List[Blog])
-@inject
-async def search_by_author(author: str,
-                           service: BlogService = Depends(Provide[Container.blog_service])):
-    return service.search_by_author(author)
-
-
-@blog_router.get("/search-by-tags", response_model=List[Blog])
-@inject
-async def search_by_tags(tags_to_search: List[str],
-                         service: BlogService = Depends(Provide[Container.blog_service])):
-    return service.search_by_tags(tags_to_search)
+    response = []
+    for blog, author, comments in blogs:
+        response.append(
+            SearchBlog(
+                title=blog.title,
+                author=author,
+                blog_text=blog.blog_text,
+                created_at=blog.created_at,
+                comments=[comment.strip() for comment in comments.split('||')] if comments else []
+            )
+        )
+    return response
 
 
 # for Admin
