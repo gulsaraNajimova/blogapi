@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List, Optional
 from pydantic import BaseModel, Field
 
@@ -42,13 +43,9 @@ class EditBlogResponse(BaseSchema, EditBlog):
 
 
 class SearchBlog(BaseModel):
-    author: Optional[str] = None
-    tags: Optional[List[str]] = None
-
-    class Config:
-        from_attributes = True
-
-
-class SearchBlogResponse(Blog):
-    search_options: Optional[SearchBlog] = None
+    title: str
+    author: str
+    blog_text: str
+    created_at: datetime
+    comments: List[str]
 
