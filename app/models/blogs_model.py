@@ -1,4 +1,5 @@
-from sqlalchemy import String, Integer, Column, ForeignKey, DateTime
+from sqlalchemy import String, Integer, Column, ForeignKey
+from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.orm import relationship
 
 from app.models.base_model import BaseModel
@@ -11,6 +12,8 @@ class BlogsModel(BaseModel):
     title = Column(String(100))
     blog_text = Column(String)
     author_id = Column(Integer, ForeignKey("users.id"))
+
+    tsvector_column = Column(TSVECTOR)
 
     owner = relationship("UserModel", back_populates="blogs")
     comments = relationship("CommentsModel", back_populates="blog")
