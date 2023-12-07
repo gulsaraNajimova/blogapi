@@ -29,5 +29,6 @@ async def add_tags(blog_id: int, tags_to_add: List[str],
 async def delete_tags(blog_id: int, tags_to_add: List[str],
                    current_user: UserModel = Depends(get_current_user),
                    service: TagService = Depends(Provide[Container.tag_service])):
+
     return service.delete_tag(blog_id, tags_to_add, current_user.id)
 
