@@ -34,9 +34,5 @@ class BlogService(BaseService):
     def get_user_blogs(self, author_id: int):
         return self.blog_repository.get_user_blogs(author_id)
 
-    def search_by_author(self, author: str):
-        return self.blog_repository.search_by_author(author)
-
-    def search_by_tags(self, tags_to_search: List[str]):
-        return self.blog_repository.search_by_tags(tags_to_search)
-
+    def search_blogs(self, search_keywords: str):
+        return self.blog_repository.search_blogs_with_weights(search_keywords)
