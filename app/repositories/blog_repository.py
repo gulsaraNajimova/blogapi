@@ -1,11 +1,12 @@
 from contextlib import AbstractContextManager
 from typing import Callable, List
 
-from sqlalchemy import bindparam
+from sqlalchemy import bindparam, func
 from sqlalchemy.orm import Session, joinedload, noload
 
 from app.core.exceptions import NotFoundError
 from app.models.blogs_model import BlogsModel
+from app.models.comments_model import CommentsModel
 from app.models.tags_model import tag_blog_association, TagsModel
 from app.models.users_model import UserModel
 from app.repositories.base_repository import BaseRepository
@@ -37,21 +38,24 @@ class BlogRepository(BaseRepository):
 
     def get_blog(self, blog_id: int):
         with self.session_factory() as session:
-            blog = session.query(self.model).options(joinedload(self.model.tags)).filter(self.model.id == bindparam("id", blog_id)).first()
+            blog = session.query(self.model).options(joinedload(self.model.tags)).filter(
+                self.model.id == bindparam("id", blog_id)).first()
             if not blog:
                 raise NotFoundError(detail=f"No Blog Found for ID {blog_id}")
             return blog
 
     def get_blog_with_comments(self, blog_id: int):
         with self.session_factory() as session:
-            blog = session.query(self.model).options(joinedload(self.model.comments)).filter(self.model.id == bindparam("id", blog_id)).first()
+            blog = session.query(self.model).options(joinedload(self.model.comments)).filter(
+                self.model.id == bindparam("id", blog_id)).first()
             if not blog:
                 raise NotFoundError(detail=f"No Blog Found for ID {blog_id}")
             return blog
 
     def get_user_blogs(self, author_id: int):
         with self.session_factory() as session:
-            blogs = session.query(self.model).options(joinedload(self.model.tags)).filter(self.model.author_id == bindparam("author_id", author_id)).all()
+            blogs = session.query(self.model).options(joinedload(self.model.tags)).filter(
+                self.model.author_id == bindparam("author_id", author_id)).all()
             if not blogs:
                 raise NotFoundError(detail="No Blogs Found for this User")
             return blogs
