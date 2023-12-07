@@ -55,6 +55,7 @@ class TagRepository(BaseRepository):
                     raise NotFoundError(detail="Tag doesn't exist in this Blog")
                 else:
                     blog.tags.remove(db_tag)
+                session.delete(db_tag)
 
             session.commit()
             session.refresh(blog)
