@@ -13,7 +13,7 @@ class AppCreator:
     def __init__(self):
         self.app = FastAPI(
             title=configs.PROJECT_NAME,
-            description="Write your blogs; Read others stories; Engage with them through comments!",
+            description="Write blogs; Read others' stories; Engage through comments!",
             openapi_url=f"{configs.API}/openapi.json",
             version="0.0.1",
         )
