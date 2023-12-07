@@ -60,19 +60,27 @@ class BlogRepository(BaseRepository):
                 raise NotFoundError(detail="No Blogs Found for this User")
             return blogs
 
-    def search_by_author(self, author: str):
-        with (self.session_factory() as session):
-            blogs = session.query(self.model).join(UserModel, self.model.author_id == UserModel.id
-                                                   ).filter(UserModel.username == author).options(joinedload(self.model.owner)).all()
-
-            if not blogs:
-                raise NotFoundError(detail="No Blogs Found for Given Author")
-            return blogs
-
-    def search_by_tags(self, tags_to_search: List[str]):
+    def search_blogs_with_weights(self, search_keywords: str):
         with self.session_factory() as session:
-            blogs = session.query(self.model).join(tag_blog_association).join(TagsModel).filter(TagsModel.tag.in_(tags_to_search)).all()  # noqa: W504
-            if not blogs:
-                raise NotFoundError(detail="No Blogs Found for Given Tag(s)")
-            return blogs
+            keywords = [keyword.strip() for keyword in search_keywords.split(',')]
+            tsqueries = [func.to_tsquery('english', keyword) for keyword in keywords]
+
+            weight_expression = sum(
+                func.ts_rank_cd(self.model.tsvector_column, tsquery, 2 ** (len(keywords) - i)) * weight
+                for i, (tsquery, weight) in enumerate(zip(tsqueries, [16, 8, 2, 8]), start=1)
+            )
+
+            results = (
+                session.query(self.model, UserModel.username.label('author'), func.string_agg(CommentsModel.comment.label("comments"), '||'))
+                .outerjoin(UserModel, self.model.author_id == UserModel.id)
+                .outerjoin(CommentsModel, self.model.id == CommentsModel.regarding_blog_id)
+                .group_by(self.model.id, UserModel.username)
+                .filter(*[self.model.tsvector_column.op('@@')(tsquery) for tsquery in tsqueries])
+                .order_by(weight_expression.desc())
+                .all()
+            )
+
+            if not results:
+                raise NotFoundError(detail="Blogs Not Found: Try finding with different keywords")
+            return results
 
