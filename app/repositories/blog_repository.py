@@ -60,15 +60,10 @@ class BlogRepository(BaseRepository):
                 raise NotFoundError(detail="No Blogs Found for this User")
             return blogs
 
-    def search_blogs_with_weights(self, search_keywords: str):
+    def search_blogs(self, search_keywords: str):
         with self.session_factory() as session:
             keywords = [keyword.strip() for keyword in search_keywords.split(',')]
             tsqueries = [func.to_tsquery('english', keyword) for keyword in keywords]
-
-            weight_expression = sum(
-                func.ts_rank_cd(self.model.tsvector_column, tsquery, 2 ** (len(keywords) - i)) * weight
-                for i, (tsquery, weight) in enumerate(zip(tsqueries, [16, 8, 2, 8]), start=1)
-            )
 
             results = (
                 session.query(self.model, UserModel.username.label('author'), func.string_agg(CommentsModel.comment.label("comments"), '||'))
@@ -76,9 +71,8 @@ class BlogRepository(BaseRepository):
                 .outerjoin(CommentsModel, self.model.id == CommentsModel.regarding_blog_id)
                 .group_by(self.model.id, UserModel.username)
                 .filter(*[self.model.tsvector_column.op('@@')(tsquery) for tsquery in tsqueries])
-                .order_by(weight_expression.desc())
-                .all()
-            )
+                .order_by(func.ts_rank_cd(self.model.tsvector_column, *tsqueries).desc())
+                .all())
 
             if not results:
                 raise NotFoundError(detail="Blogs Not Found: Try finding with different keywords")
