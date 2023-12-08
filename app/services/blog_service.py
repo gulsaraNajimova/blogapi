@@ -35,4 +35,4 @@ class BlogService(BaseService):
         return self.blog_repository.get_user_blogs(author_id)
 
     def search_blogs(self, search_keywords: str):
-        return self.blog_repository.search_blogs_with_weights(search_keywords)
+        return self.blog_repository.search_blogs(search_keywords)
