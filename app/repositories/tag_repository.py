@@ -1,13 +1,24 @@
 from contextlib import AbstractContextManager
 from typing import Callable, List
 
-from sqlalchemy import bindparam
+from sqlalchemy import bindparam, text
 from sqlalchemy.orm import Session, joinedload
 
 from app.core.exceptions import NotFoundError, AuthError, DuplicatedError
 from app.models.blogs_model import BlogsModel
 from app.models.tags_model import TagsModel
 from app.repositories.base_repository import BaseRepository
+
+
+tsvector_update_sql = """
+    UPDATE blogs  
+    SET tsvector_column = setweight(to_tsvector('english', 
+        COALESCE((SELECT array_to_string(array_agg(tags.tag), ' ')
+                FROM blog_tags 
+                LEFT JOIN tags ON blog_tags.tag_id = tags.id
+                WHERE blog_tags.blog_id = :blog_id), '')), 'B')
+    WHERE blogs.id = :blog_id
+"""
 
 
 class TagRepository(BaseRepository):
@@ -35,7 +46,9 @@ class TagRepository(BaseRepository):
                     tag = db_tag
 
                 blog.tags.append(tag)
+            session.commit()
 
+            session.execute(text(tsvector_update_sql), {'blog_id': blog_id})
             session.commit()
             session.refresh(blog)
             return blog
@@ -57,6 +70,9 @@ class TagRepository(BaseRepository):
                     blog.tags.remove(db_tag)
                 session.delete(db_tag)
 
+            session.commit()
+
+            session.execute(text(tsvector_update_sql), {'blog_id': blog_id})
             session.commit()
             session.refresh(blog)
             return blog
