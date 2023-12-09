@@ -2,7 +2,7 @@
 
 Welcome to the FastAPI Blog API, a feature-rich API for managing users, blogs, tags, and comments.
 
-## Structure of this API
+## Structure
 ![Alt Text](diagram.png)
 
 ## Installation
@@ -66,7 +66,7 @@ This project is structured using containers, providing a modular and scalable ar
 This project uses PostreSQL's tsvector and tsquery type which is used for searching through a collection of natural-language documents 
 to locate those that best match a query. 
 The tsvector type represents a document in a form optimized for text search; the tsquery type similarly represents a text query.
-The weights used for this project were (listed as from most important ot least important):
+The weights used for this project were (listed from most important ot least important):
 
 1. Title - "A"
 2. Author - "B"
