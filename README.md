@@ -38,7 +38,6 @@ The API will be accessible at http://localhost:8000.
 3. Database
    1. Postgresql
    2. Migration with Alembic
-   3. Load two ways: eager and lazy
 4. Dependency-injector 
    1. service-repository pattern
 5. JWT authentication 
