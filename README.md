@@ -29,7 +29,7 @@ The API will be accessible at http://localhost:8000.
 1. Install Docker 
 2. Create .env file
 3. Run `docker-compose up -d` in the terminal. The -d flag runs the containers in the background. The services defined in the docker-compose.yml file, such as the FastAPI application and PostgreSQL database, will be built and started. 
-4. Access the FastAPI application by navigating to http://localhost:3000 in your web browser.
+4. Access the FastAPI application by navigating to http://localhost:8000 in your web browser.
 
 ### Sample .env file format
 ```dotenv
