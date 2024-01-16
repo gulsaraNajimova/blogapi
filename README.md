@@ -22,8 +22,26 @@ pip install -r requirements.txt
 ```bash
 uvicorn app.main:app --reload
 ```
-
 The API will be accessible at http://localhost:8000.
+
+
+### How to run with Docker Compose
+1. Install Docker 
+2. Create .env file
+3. Run `docker-compose up -d` in the terminal. The -d flag runs the containers in the background. The services defined in the docker-compose.yml file, such as the FastAPI application and PostgreSQL database, will be built and started. 
+4. Access the FastAPI application by navigating to http://localhost:3000 in your web browser.
+
+### Sample .env file format
+```dotenv
+    ENV=env
+    DB=postgresql
+    DB_USER=
+    DB_PASSWORD=
+    DB_HOST=localhost
+    DB_PORT=5432
+   
+    SECRET_KEY = "SECRET_KEY_VALUE"
+```
 
 ## Base Models
 1. users
@@ -38,21 +56,12 @@ The API will be accessible at http://localhost:8000.
 3. Database
    1. Postgresql
    2. Migration with Alembic
-4. Dependency-injector 
+4. Docker 24.0.7
+5. Dependency-injector 
    1. service-repository pattern
-5. JWT authentication 
+6. JWT authentication 
    1. role separation each endpoint
 
-### Sample env
-```bash
-ENV=dev 
-DB=postgresql
-DB_USER=
-DB_PASSWORD=
-DB_HOST=localhost
-DB_PORT=5432
-SECRET_KEY = "SECRET_KEY_VALUE"
-```
 
 ## Containers Usage
 This project is structured using containers, providing a modular and scalable architecture. Key components include:
@@ -77,8 +86,9 @@ The combination of tsvector and ts_rank_cd was very important for creating an ef
 
 
 ## References:
-1. https://fastapi.tiangolo.com/
-2. https://docs.sqlalchemy.org/
-3. https://alembic.sqlalchemy.org/en/latest/
-4. https://www.postgresql.org/docs/current/textsearch.html
-5. https://www.postgresql.org/docs/current/textsearch-controls.html#TEXTSEARCH-RANKING
+1. [Fastapi official documentation](https://fastapi.tiangolo.com/)
+2. [Sqlalchemy official documentation](https://docs.sqlalchemy.org/)
+3. [Alembic official documentation](https://alembic.sqlalchemy.org/en/latest/)
+4. [Docker official tutorial](https://docs.docker.com/get-started/) 
+5. [PostrgeSQL Text Search](https://www.postgresql.org/docs/current/textsearch.html)
+6. [PostgreSQL Text Search Ranking](https://www.postgresql.org/docs/current/textsearch-controls.html#TEXTSEARCH-RANKING)
