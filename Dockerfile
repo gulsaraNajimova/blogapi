@@ -1,5 +1,11 @@
-FROM ubuntu:22.10
+FROM python:3.11
 
-LABEL author=HyperUser
+WORKDIR ./blogapi
 
-ENTRYPOINT ["/bin/bash"]
+COPY ./requirements.txt /blogapi/requirements.txt
+
+RUN pip install --no-cache-dir --upgrade -r /blogapi/requirements.txt
+
+COPY ./app /blogapi/app
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
