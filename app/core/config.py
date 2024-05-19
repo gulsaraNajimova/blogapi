@@ -12,16 +12,6 @@ class Configs(BaseSettings):
     ENV: str = os.getenv("ENV", "dev")
     API: str = "/api"
     PROJECT_NAME: str = "Blog API"
-    ENV_DATABASE_MAPPER: dict = {
-        "prod": "postgres",
-        "stage": "postgres",
-        "env": "postgres",
-        "test": "postgres",
-    }
-    DB_ENGINE_MAPPER: dict = {
-        "postgresql": "postgresql",
-        "mysql": "mysql+pymysql",
-    }
 
     PROJECT_ROOT: str = os.path.dirname(
         os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -35,12 +25,12 @@ class Configs(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 30  # => 30 days
 
     # database
-    DB: str = os.getenv("DB", "postgresql")
+    DB_NAME: str = os.getenv("DB_NAME", "postgresql")
     DB_USER: str = os.getenv("DB_USER")
     DB_PASSWORD: str = os.getenv("DB_PASSWORD")
     DB_HOST: str = os.getenv("DB_HOST")
     DB_PORT: str = os.getenv("DB_PORT")
-    DB_ENGINE: str = DB_ENGINE_MAPPER.get(DB, "postgresql")
+    DB_ENGINE: str = "postgresql"
 
     DATABASE_URI_FORMAT: str = "{db_engine}://{user}:{password}@{host}:{port}/{database}"
 
@@ -50,7 +40,7 @@ class Configs(BaseSettings):
         password=DB_PASSWORD,
         host=DB_HOST,
         port=DB_PORT,
-        database=ENV_DATABASE_MAPPER[ENV],
+        database=DB_NAME
     )
 
     class Config:
