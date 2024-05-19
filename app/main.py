@@ -1,4 +1,4 @@
-from fastapi import FastAPI, status
+from fastapi import FastAPI
 
 from app.core.config import configs
 from app.core.containers import Container
@@ -21,7 +21,7 @@ class AppCreator:
         # set db and container
         self.container = Container()
         self.db = self.container.db()
-        # self.db.create_database()
+        self.db.create_database()
 
         # set routes
         @self.app.get("/")
