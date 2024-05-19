@@ -34,7 +34,7 @@ The API will be accessible at http://localhost:8000.
 ### Sample .env file format
 ```dotenv
     ENV=env
-    DB=postgresql
+    DB_NAME=postgresql
     DB_USER=
     DB_PASSWORD=
     DB_HOST=localhost
